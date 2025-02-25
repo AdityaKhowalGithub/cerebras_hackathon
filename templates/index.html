@@ -413,6 +413,121 @@
                 max-width: 300px;
             }
         }
+        
+        /* Table styling for budget */
+        .budget-table {
+            width: 100%;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+        }
+        
+        .budget-actions {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .budget-actions h3 {
+            font-size: 1.2rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #495057;
+        }
+        
+        .resource-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .resource-link {
+            display: inline-flex;
+            align-items: center;
+            background-color: white;
+            color: #007bff;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            border: 1px solid #dee2e6;
+            transition: all 0.2s ease;
+        }
+        
+        .resource-link:hover {
+            background-color: #f1f8ff;
+            border-color: #007bff;
+            color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .resource-link i {
+            margin-right: 8px;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+        
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background-color: #138496;
+            border-color: #117a8b;
+        }
+        
+        /* Tooltip styling */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            font-weight: normal;
+        }
+        
+        .tooltip .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -481,7 +596,22 @@
 
         <div class="results" id="results">
             <div class="results-controls">
-                <button id="new-scan-btn" class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Scan Another Script</button>
+                <div class="tooltip">
+                    <button id="new-scan-btn" class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Scan Another Script</button>
+                    <span class="tooltip-text">Start over with a new script</span>
+                </div>
+                <div class="tooltip">
+                    <button id="export-budget-btn" class="btn btn-success" style="margin-left: 10px;"><i class="fas fa-file-export"></i> Export Budget CSV</button>
+                    <span class="tooltip-text">Download a CSV file with all budget line items and costs</span>
+                </div>
+                <div class="tooltip">
+                    <button id="resources-btn" class="btn btn-info" style="margin-left: 10px;"><i class="fas fa-shopping-cart"></i> Export Shopping Links CSV</button>
+                    <span class="tooltip-text">Download a CSV with each budget item and links to purchase or hire what you need</span>
+                </div>
+                <div class="tooltip">
+                    <button id="view-shopping-table-btn" class="btn btn-primary" style="margin-left: 10px;"><i class="fas fa-table"></i> View Shopping Links Table</button>
+                    <span class="tooltip-text">View and edit a table of shopping links for your budget items</span>
+                </div>
             </div>
             
             <div class="results-grid">
@@ -493,12 +623,138 @@
                 <div class="card results-section">
                     <h2><i class="fas fa-dollar-sign"></i> Production Budget</h2>
                     <div id="budget" class="results-content"></div>
+                    <div id="budget-actions" class="budget-actions" style="margin-top: 15px; display: none;">
+                        <h3>Production Resources <button id="toggle-resources" class="btn-sm" style="float:right; font-size: 0.8rem; padding: 2px 8px; background: none; border: 1px solid #dee2e6; border-radius: 4px;"><i class="fas fa-chevron-up"></i> Hide</button></h3>
+                        <div class="resource-links">
+                            <a href="https://www.filmtools.com/" target="_blank" class="resource-link"><i class="fas fa-shopping-cart"></i> Props & Equipment</a>
+                            <a href="https://sharegrid.com/" target="_blank" class="resource-link"><i class="fas fa-truck-loading"></i> Equipment Rentals</a>
+                            <a href="https://www.productionhub.com/" target="_blank" class="resource-link"><i class="fas fa-users"></i> Hire Talent & Crew</a>
+                            <a href="https://www.studiolist.com/" target="_blank" class="resource-link"><i class="fas fa-building"></i> Studio Spaces</a>
+                            <a href="https://www.backstagehub.com/" target="_blank" class="resource-link"><i class="fas fa-user-tie"></i> Cast Actors</a>
+                            <a href="https://www.sweetwater.com/" target="_blank" class="resource-link"><i class="fas fa-microphone"></i> Audio Equipment</a>
+                            <a href="https://editstock.com/" target="_blank" class="resource-link"><i class="fas fa-film"></i> Post-Production</a>
+                            <a href="https://www.insurancecanopy.com/" target="_blank" class="resource-link"><i class="fas fa-shield-alt"></i> Film Insurance</a>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card results-section">
                     <h2><i class="fas fa-piggy-bank"></i> Cost-Saving Suggestions</h2>
                     <div id="suggestions" class="results-content"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Links Table Modal -->
+    <div id="shopping-links-modal" class="modal" style="display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6);">
+        <div class="modal-content" style="background-color: white; margin: 5% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 1200px; max-height: 80vh; overflow-y: auto;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin: 0;"><i class="fas fa-shopping-cart"></i> Shopping Links</h2>
+                <span class="close-modal" style="font-size: 24px; cursor: pointer;">&times;</span>
+            </div>
+            
+            <div class="add-item-form" style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 6px;">
+                <h3>Add New Item</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="new-item-category">Category:</label>
+                        <select id="new-item-category" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #dee2e6;">
+                            <option value="Camera Equipment">Camera Equipment</option>
+                            <option value="Production Equipment">Production Equipment</option>
+                            <option value="Lighting Equipment">Lighting Equipment</option>
+                            <option value="Sound Equipment">Sound Equipment</option>
+                            <option value="Props">Props</option>
+                            <option value="Costumes">Costumes</option>
+                            <option value="Hair & Makeup">Hair & Makeup</option>
+                            <option value="Set Design">Set Design</option>
+                            <option value="Visual Effects">Visual Effects</option>
+                            <option value="Special Effects">Special Effects</option>
+                            <option value="Cast">Cast</option>
+                            <option value="Crew">Crew</option>
+                            <option value="Locations">Locations</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Catering & Craft Services">Catering & Craft Services</option>
+                            <option value="Insurance & Legal">Insurance & Legal</option>
+                        </select>
+                        <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 0.85rem;">
+                            Choose the category that best matches your item. The right category helps find appropriate vendors and links.
+                        </small>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label for="new-item-name">Item Name:</label>
+                        <input type="text" id="new-item-name" placeholder="Enter item name" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #dee2e6;">
+                        <small style="display: block; margin-top: 5px; color: #6c757d; font-size: 0.85rem;">
+                            Be specific with item names for better search results (e.g., "Canon EOS R5 Camera" instead of just "Camera").
+                        </small>
+                    </div>
+                    <div style="flex: 1; min-width: 150px;">
+                        <label for="new-item-cost">Estimated Cost:</label>
+                        <input type="text" id="new-item-cost" placeholder="$0.00" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #dee2e6;">
+                    </div>
+                    <div style="flex: 0 0 auto; align-self: flex-end;">
+                        <button id="add-item-btn" class="btn btn-primary" style="padding: 8px 15px;"><i class="fas fa-plus"></i> Add & Find Links</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-filters" style="margin-bottom: 15px; padding: 15px; background-color: #f1f8ff; border-radius: 6px; display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;">
+                <div style="flex: 1; min-width: 200px;">
+                    <label for="filter-category">Filter by Category:</label>
+                    <select id="filter-category" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #dee2e6;">
+                        <option value="">All Categories</option>
+                        <option value="Camera Equipment">Camera Equipment</option>
+                        <option value="Production Equipment">Production Equipment</option>
+                        <option value="Lighting Equipment">Lighting Equipment</option>
+                        <option value="Sound Equipment">Sound Equipment</option>
+                        <option value="Props">Props</option>
+                        <option value="Costumes">Costumes</option>
+                        <option value="Hair & Makeup">Hair & Makeup</option>
+                        <option value="Set Design">Set Design</option>
+                        <option value="Visual Effects">Visual Effects</option>
+                        <option value="Special Effects">Special Effects</option>
+                        <option value="Cast">Cast</option>
+                        <option value="Crew">Crew</option>
+                        <option value="Locations">Locations</option>
+                        <option value="Transportation">Transportation</option>
+                        <option value="Catering & Craft Services">Catering & Craft Services</option>
+                        <option value="Insurance & Legal">Insurance & Legal</option>
+                    </select>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                    <label for="filter-search">Search Items:</label>
+                    <input type="text" id="filter-search" placeholder="Search by item name..." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #dee2e6;">
+                </div>
+                <div style="flex: 0 0 auto;">
+                    <button id="apply-filters-btn" class="btn btn-primary" style="padding: 8px 15px;"><i class="fas fa-filter"></i> Apply Filters</button>
+                    <button id="clear-filters-btn" class="btn btn-secondary" style="padding: 8px 15px; margin-left: 5px;"><i class="fas fa-times"></i> Clear</button>
+                </div>
+                <div style="flex: 0 0 auto; margin-left: auto;">
+                    <button id="find-script-items-btn" class="btn btn-success" style="padding: 8px 15px;"><i class="fas fa-magic"></i> Find Script-Specific Items</button>
+                </div>
+            </div>
+            
+            <div class="shopping-links-table-container" style="margin-bottom: 20px;">
+                <table id="shopping-links-table" class="data-table" style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left; padding: 10px; background-color: #f1f8ff; border: 1px solid #dee2e6;">Category</th>
+                            <th style="text-align: left; padding: 10px; background-color: #f1f8ff; border: 1px solid #dee2e6;">Item</th>
+                            <th style="text-align: left; padding: 10px; background-color: #f1f8ff; border: 1px solid #dee2e6;">Estimated Cost</th>
+                            <th style="text-align: left; padding: 10px; background-color: #f1f8ff; border: 1px solid #dee2e6;">Vendor</th>
+                            <th style="text-align: left; padding: 10px; background-color: #f1f8ff; border: 1px solid #dee2e6;">Purchase Link</th>
+                            <th style="text-align: center; padding: 10px; background-color: #f1f8ff; border: 1px solid #dee2e6;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Shopping links will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="modal-footer" style="display: flex; justify-content: space-between;">
+                <button id="export-modal-table-btn" class="btn btn-success"><i class="fas fa-file-export"></i> Export as CSV</button>
+                <button id="close-modal-btn" class="btn btn-secondary">Close</button>
             </div>
         </div>
     </div>
@@ -597,6 +853,9 @@
                     document.getElementById('budget').innerHTML = enhanceBudgetHTML(data.budget_html);
                     document.getElementById('suggestions').innerHTML = data.cost_saving_suggestions_html;
                     
+                    // Store the original budget text for CSV export
+                    window.currentBudgetText = data.budget;
+                    
                     // Hide the input form section
                     document.getElementById('input-form-section').style.display = 'none';
                     
@@ -605,6 +864,8 @@
                     
                     // Scroll to results
                     document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+                    
+                    showBudgetActions(); // Show the budget actions section
                 } else {
                     showError(data.error || 'Failed to process script');
                 }
@@ -618,7 +879,7 @@
         
         // Function to enhance table rendering with proper borders
         function enhanceBudgetHTML(html) {
-            // Ensure tables have the proper classes and styling
+            // Add nice styling to tables
             html = html.replace(/<table>/g, '<table class="budget-table">');
             
             // Find category rows (those with stronger formatting) and add appropriate classes
@@ -630,11 +891,694 @@
             return html;
         }
 
+        // Function to convert budget tables to CSV
+        function exportBudgetToCSV() {
+            const budgetDiv = document.getElementById('budget');
+            if (!budgetDiv || !budgetDiv.innerHTML.trim()) {
+                alert('No budget data available to export. Please generate a budget first.');
+                return;
+            }
+            
+            // Store the original budget text
+            const budgetText = window.currentBudgetText;
+            
+            if (!budgetText) {
+                alert('Budget data not available in text format. Please regenerate the budget.');
+                return;
+            }
+            
+            // Create a form to submit for CSV export
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/export_budget_csv';
+            
+            // Add budget text as hidden field
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = 'budget_text';
+            hiddenField.value = budgetText;
+            
+            form.appendChild(hiddenField);
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        }
+        
+        // Add event listener for export button
+        document.getElementById('export-budget-btn').addEventListener('click', exportBudgetToCSV);
+        
+        // Add event listener for resources button
+        document.getElementById('resources-btn').addEventListener('click', function() {
+            exportResourcesCSV();
+        });
+        
+        // Add event listener for toggling resource links visibility
+        document.getElementById('toggle-resources').addEventListener('click', function() {
+            const resourceLinks = this.parentElement.nextElementSibling;
+            const isVisible = resourceLinks.style.display !== 'none';
+            
+            if (isVisible) {
+                resourceLinks.style.display = 'none';
+                this.innerHTML = '<i class="fas fa-chevron-down"></i> Show';
+            } else {
+                resourceLinks.style.display = 'flex';
+                this.innerHTML = '<i class="fas fa-chevron-up"></i> Hide';
+            }
+        });
+        
+        // Shopping Links Table functionality
+        let shoppingTableData = [];
+        
+        // Open the shopping links modal
+        document.getElementById('view-shopping-table-btn').addEventListener('click', function() {
+            const budgetText = window.currentBudgetText;
+            if (!budgetText) {
+                alert('No budget data available. Please generate a budget first.');
+                return;
+            }
+            
+            // Show loading in the table
+            const tableBody = document.querySelector('#shopping-links-table tbody');
+            tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Loading shopping links...</td></tr>';
+            
+            // Show the modal
+            document.getElementById('shopping-links-modal').style.display = 'block';
+            
+            // Fetch shopping links data
+            fetch('/get_shopping_table_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    budget_text: budgetText
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                shoppingTableData = data;
+                renderShoppingTable();
+            })
+            .catch(error => {
+                console.error('Error fetching shopping links data:', error);
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px; color: red;">Error loading shopping links. Please try again.</td></tr>';
+            });
+        });
+        
+        // Close the shopping links modal
+        document.querySelector('.close-modal').addEventListener('click', function() {
+            document.getElementById('shopping-links-modal').style.display = 'none';
+        });
+        
+        document.getElementById('close-modal-btn').addEventListener('click', function() {
+            document.getElementById('shopping-links-modal').style.display = 'none';
+        });
+        
+        // Render the shopping links table
+        function renderShoppingTable(filterCategory = '', filterSearch = '') {
+            const tableBody = document.querySelector('#shopping-links-table tbody');
+            tableBody.innerHTML = '';
+            
+            if (shoppingTableData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">No shopping links available.</td></tr>';
+                return;
+            }
+            
+            // Apply filters
+            let filteredData = shoppingTableData;
+            
+            if (filterCategory) {
+                filteredData = filteredData.filter(item => item.category === filterCategory);
+            }
+            
+            if (filterSearch) {
+                const searchLower = filterSearch.toLowerCase();
+                filteredData = filteredData.filter(item => 
+                    item.item.toLowerCase().includes(searchLower) || 
+                    item.category.toLowerCase().includes(searchLower) ||
+                    item.vendor.toLowerCase().includes(searchLower)
+                );
+            }
+            
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">No items match your filters.</td></tr>';
+                return;
+            }
+            
+            filteredData.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.style.borderBottom = '1px solid #dee2e6';
+                
+                // Apply special styling for script-specific items
+                if (item.script_specific) {
+                    row.style.backgroundColor = 'rgba(40, 167, 69, 0.08)';
+                }
+                
+                row.innerHTML = `
+                    <td style="padding: 8px; border: 1px solid #dee2e6;">${item.category}</td>
+                    <td style="padding: 8px; border: 1px solid #dee2e6;">
+                        ${item.item}
+                        ${item.script_specific ? '<span class="badge" style="background-color: #28a745; color: white; font-size: 0.75rem; padding: 2px 6px; border-radius: 10px; margin-left: 5px;">Script Item</span>' : ''}
+                    </td>
+                    <td style="padding: 8px; border: 1px solid #dee2e6;">${item.cost}</td>
+                    <td style="padding: 8px; border: 1px solid #dee2e6;">${item.vendor}</td>
+                    <td style="padding: 8px; border: 1px solid #dee2e6;"><a href="${item.url}" target="_blank" style="color: #007bff; text-decoration: none;">View <i class="fas fa-external-link-alt" style="font-size: 0.8em;"></i></a></td>
+                    <td style="padding: 8px; text-align: center; border: 1px solid #dee2e6;">
+                        <button class="btn-sm btn-edit" data-index="${index}" style="background: none; border: none; color: #17a2b8; cursor: pointer; margin-right: 5px;"><i class="fas fa-edit"></i></button>
+                        <button class="btn-sm btn-delete" data-index="${index}" style="background: none; border: none; color: #dc3545; cursor: pointer;"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners for edit and delete buttons
+            addRowActionListeners();
+        }
+        
+        // Add event listeners for row actions (edit, delete)
+        function addRowActionListeners() {
+            // Edit button event listeners
+            document.querySelectorAll('.btn-edit').forEach(button => {
+                button.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    const item = shoppingTableData[index];
+                    
+                    // Create edit form modal
+                    const editModal = document.createElement('div');
+                    editModal.className = 'modal';
+                    editModal.style.display = 'block';
+                    editModal.style.position = 'fixed';
+                    editModal.style.zIndex = '1050';
+                    editModal.style.left = '0';
+                    editModal.style.top = '0';
+                    editModal.style.width = '100%';
+                    editModal.style.height = '100%';
+                    editModal.style.overflow = 'auto';
+                    editModal.style.backgroundColor = 'rgba(0,0,0,0.4)';
+                    
+                    // Create modal content
+                    const modalContent = document.createElement('div');
+                    modalContent.style.backgroundColor = '#fefefe';
+                    modalContent.style.margin = '15% auto';
+                    modalContent.style.padding = '20px';
+                    modalContent.style.border = '1px solid #888';
+                    modalContent.style.width = '80%';
+                    modalContent.style.maxWidth = '500px';
+                    modalContent.style.borderRadius = '5px';
+                    
+                    // Modal header
+                    const modalHeader = document.createElement('div');
+                    modalHeader.style.display = 'flex';
+                    modalHeader.style.justifyContent = 'space-between';
+                    modalHeader.style.alignItems = 'center';
+                    modalHeader.style.marginBottom = '15px';
+                    
+                    const modalTitle = document.createElement('h4');
+                    modalTitle.textContent = 'Edit Item';
+                    modalTitle.style.margin = '0';
+                    
+                    const closeBtn = document.createElement('span');
+                    closeBtn.innerHTML = '&times;';
+                    closeBtn.style.color = '#aaa';
+                    closeBtn.style.float = 'right';
+                    closeBtn.style.fontSize = '28px';
+                    closeBtn.style.fontWeight = 'bold';
+                    closeBtn.style.cursor = 'pointer';
+                    closeBtn.onclick = function() {
+                        document.body.removeChild(editModal);
+                    };
+                    
+                    modalHeader.appendChild(modalTitle);
+                    modalHeader.appendChild(closeBtn);
+                    
+                    // Create edit form
+                    const editForm = document.createElement('form');
+                    editForm.id = 'edit-shopping-item-form';
+                    
+                    const fields = [
+                        { id: 'edit-category', label: 'Category', value: item.category, required: true, type: 'select', options: getCategoryOptions(item.category) },
+                        { id: 'edit-item', label: 'Item Name', value: item.item, required: true, type: 'text' },
+                        { id: 'edit-cost', label: 'Estimated Cost', value: item.cost, required: false, type: 'text' },
+                        { id: 'edit-vendor', label: 'Vendor', value: item.vendor, required: false, type: 'text' },
+                        { id: 'edit-url', label: 'URL', value: item.url, required: false, type: 'text' }
+                    ];
+                    
+                    fields.forEach(field => {
+                        const formGroup = document.createElement('div');
+                        formGroup.style.marginBottom = '15px';
+                        
+                        const label = document.createElement('label');
+                        label.setAttribute('for', field.id);
+                        label.textContent = field.label;
+                        label.style.display = 'block';
+                        label.style.marginBottom = '5px';
+                        label.style.fontWeight = 'bold';
+                        
+                        let input;
+                        
+                        if (field.type === 'select') {
+                            input = document.createElement('select');
+                            input.innerHTML = field.options;
+                        } else {
+                            input = document.createElement('input');
+                            input.type = field.type;
+                            input.value = field.value;
+                        }
+                        
+                        input.id = field.id;
+                        input.className = 'form-control';
+                        input.style.width = '100%';
+                        input.style.padding = '8px';
+                        input.style.border = '1px solid #ced4da';
+                        input.style.borderRadius = '4px';
+                        
+                        if (field.required) {
+                            input.required = true;
+                        }
+                        
+                        formGroup.appendChild(label);
+                        formGroup.appendChild(input);
+                        editForm.appendChild(formGroup);
+                    });
+                    
+                    const buttonGroup = document.createElement('div');
+                    buttonGroup.style.display = 'flex';
+                    buttonGroup.style.justifyContent = 'space-between';
+                    buttonGroup.style.marginTop = '20px';
+                    
+                    const saveBtn = document.createElement('button');
+                    saveBtn.type = 'submit';
+                    saveBtn.className = 'btn btn-primary';
+                    saveBtn.textContent = 'Save Changes';
+                    saveBtn.style.backgroundColor = '#007bff';
+                    saveBtn.style.color = 'white';
+                    saveBtn.style.padding = '8px 16px';
+                    saveBtn.style.border = 'none';
+                    saveBtn.style.borderRadius = '4px';
+                    saveBtn.style.cursor = 'pointer';
+                    
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.type = 'button';
+                    cancelBtn.className = 'btn btn-secondary';
+                    cancelBtn.textContent = 'Cancel';
+                    cancelBtn.style.backgroundColor = '#6c757d';
+                    cancelBtn.style.color = 'white';
+                    cancelBtn.style.padding = '8px 16px';
+                    cancelBtn.style.border = 'none';
+                    cancelBtn.style.borderRadius = '4px';
+                    cancelBtn.style.cursor = 'pointer';
+                    cancelBtn.onclick = function() {
+                        document.body.removeChild(editModal);
+                    };
+                    
+                    buttonGroup.appendChild(saveBtn);
+                    buttonGroup.appendChild(cancelBtn);
+                    editForm.appendChild(buttonGroup);
+                    
+                    editForm.addEventListener('submit', function(event) {
+                        event.preventDefault();
+                        
+                        // Get the updated values
+                        const category = document.getElementById('edit-category').value;
+                        const itemName = document.getElementById('edit-item').value;
+                        const cost = document.getElementById('edit-cost').value;
+                        const vendor = document.getElementById('edit-vendor').value;
+                        const url = document.getElementById('edit-url').value;
+                        
+                        if (!itemName) {
+                            alert('Item name cannot be empty');
+                            return;
+                        }
+                        
+                        // Update the item in the shopping table data
+                        shoppingTableData[index] = {
+                            category: category,
+                            item: itemName,
+                            cost: cost,
+                            vendor: vendor,
+                            url: url,
+                            script_specific: item.script_specific
+                        };
+                        
+                        // Update filter options
+                        updateCategoryFilterOptions();
+                        
+                        // Close the modal
+                        document.body.removeChild(editModal);
+                        
+                        // Render the updated table
+                        renderShoppingTable();
+                        
+                        // Show success message
+                        showSuccess('Item updated successfully!');
+                    });
+                    
+                    modalContent.appendChild(modalHeader);
+                    modalContent.appendChild(editForm);
+                    editModal.appendChild(modalContent);
+                    document.body.appendChild(editModal);
+                });
+            });
+            
+            // Delete buttons
+            document.querySelectorAll('.btn-delete').forEach(button => {
+                button.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to delete this item?')) {
+                        const index = parseInt(this.dataset.index);
+                        shoppingTableData.splice(index, 1);
+                        
+                        // Update category filter options
+                        updateCategoryFilterOptions();
+                        
+                        // Render the table with the updated data
+                        renderShoppingTable();
+                        
+                        // Show success message
+                        showSuccess('Item deleted successfully!');
+                    }
+                });
+            });
+        }
+        
+        // Helper function to generate category options for select dropdown
+        function getCategoryOptions(selectedCategory) {
+            const categories = [
+                'Camera Equipment',
+                'Production Equipment',
+                'Lighting Equipment',
+                'Sound Equipment',
+                'Props',
+                'Costumes',
+                'Hair & Makeup',
+                'Set Design',
+                'Visual Effects',
+                'Special Effects',
+                'Cast',
+                'Crew',
+                'Locations',
+                'Transportation',
+                'Catering & Craft Services',
+                'Insurance & Legal',
+                'Pre-Production',
+                'Production',
+                'Post-Production',
+                'Contingency'
+            ];
+            
+            return categories.map(category => 
+                `<option value="${category}" ${category === selectedCategory ? 'selected' : ''}>${category}</option>`
+            ).join('');
+        }
+        
+        // Add new item to shopping links table
+        document.getElementById('add-item-btn').addEventListener('click', function() {
+            const category = document.getElementById('new-item-category').value;
+            const item = document.getElementById('new-item-name').value;
+            const cost = document.getElementById('new-item-cost').value || 'Varies';
+            
+            if (!item) {
+                alert('Item name cannot be empty.');
+                return;
+            }
+            
+            // Create a form for handling the add event
+            const form = document.createElement('form');
+            form.id = 'add-shopping-item-form';
+            form.style.display = 'none';
+            document.body.appendChild(form);
+            
+            // Determine appropriate vendor for this category
+            const vendorMappings = {
+                'Camera Equipment': ['ShareGrid', 'https://sharegrid.com/search?q='],
+                'Production Equipment': ['FilmTools', 'https://www.filmtools.com/search-results?q='],
+                'Lighting Equipment': ['FilmTools', 'https://www.filmtools.com/search-results?q='],
+                'Sound Equipment': ['Sweetwater', 'https://www.sweetwater.com/store/search.php?s='],
+                'Props': ['PropHouse', 'https://www.prophouse.com/search?q='],
+                'Costumes': ['CostumeSuperCenter', 'https://www.costumesupercenter.com/search?q='],
+                'Hair & Makeup': ['MakeupArtistChoice', 'https://www.makeupartistschoice.com/search?q='],
+                'Set Design': ['RoseBrand', 'https://www.rosebrand.com/search?q='],
+                'Special Effects': ['FXWarehouse', 'https://fxwarehouse.com/search?q='],
+                'Cast': ['BackstageHub', 'https://www.backstagehub.com/search?query='],
+                'Crew': ['ProductionHub', 'https://www.productionhub.com/directory?q='],
+                'Locations': ['StudioList', 'https://www.studiolist.com/search?q=']
+            };
+            
+            // Default vendor if category not found in mappings
+            let vendor = 'ProductionHub';
+            let vendorBaseUrl = 'https://www.productionhub.com/directory?q=';
+            
+            if (vendorMappings[category]) {
+                [vendor, vendorBaseUrl] = vendorMappings[category];
+            }
+            
+            // Create the vendor URL with the item as search query
+            const searchQuery = item.replace(/[^\w\s]/g, ' ').trim();
+            const vendorUrl = vendorBaseUrl + searchQuery.replace(/\s+/g, '+');
+            
+            // Add the new item to the shopping table data
+            const newItem = {
+                category: category,
+                item: item,
+                cost: cost,
+                vendor: vendor,
+                url: vendorUrl,
+                script_specific: false
+            };
+            
+            shoppingTableData.unshift(newItem);
+            
+            // Update filter options
+            updateCategoryFilterOptions();
+            
+            // Reset the form
+            document.getElementById('new-item-name').value = '';
+            document.getElementById('new-item-cost').value = '';
+            
+            // Render the table with the new data
+            renderShoppingTable();
+            
+            // Show success message
+            showSuccess('Item added successfully!');
+            
+            // Remove the temporary form
+            document.body.removeChild(form);
+        });
+        
+        // Export table data as CSV
+        document.getElementById('export-modal-table-btn').addEventListener('click', function() {
+            if (shoppingTableData.length === 0) {
+                alert('No shopping links data to export.');
+                return;
+            }
+            
+            let csvContent = 'Category,Item,Estimated Cost,Vendor,Purchase Link\n';
+            
+            shoppingTableData.forEach(item => {
+                csvContent += `"${item.category}","${item.item}","${item.cost}","${item.vendor}","${item.url}"\n`;
+            });
+            
+            const encodedUri = encodeURI('data:text/csv;charset=utf-8,' + csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'shopping_links.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+        
+        // Function to export production resources as CSV
+        function exportResourcesCSV() {
+            const budgetDiv = document.getElementById('budget');
+            if (!budgetDiv || !budgetDiv.innerHTML.trim()) {
+                alert('No budget data available. Please generate a budget first to get personalized resource links.');
+                return;
+            }
+            
+            // Store the original budget text
+            const budgetText = window.currentBudgetText;
+            
+            if (!budgetText) {
+                alert('Budget data not available in text format. Please regenerate the budget.');
+                return;
+            }
+            
+            // Create a form to submit for CSV export
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/export_resources_csv';
+            
+            // Add budget text as hidden field
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = 'budget_text';
+            hiddenField.value = budgetText;
+            
+            form.appendChild(hiddenField);
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+            
+            // Also show the resources section
+            const budgetActions = document.getElementById('budget-actions');
+            if (budgetActions) {
+                budgetActions.style.display = 'block';
+            }
+        }
+        
+        // Show resource links when budget is displayed
+        function showBudgetActions() {
+            const budgetDiv = document.getElementById('budget');
+            const budgetActions = document.getElementById('budget-actions');
+            
+            if (budgetDiv && budgetDiv.innerHTML.trim() && budgetActions) {
+                budgetActions.style.display = 'block';
+            }
+        }
+
+        // Apply filters to shopping links table
+        document.getElementById('apply-filters-btn').addEventListener('click', function() {
+            const filterCategory = document.getElementById('filter-category').value;
+            const filterSearch = document.getElementById('filter-search').value;
+            renderShoppingTable(filterCategory, filterSearch);
+        });
+        
+        // Clear filters
+        document.getElementById('clear-filters-btn').addEventListener('click', function() {
+            document.getElementById('filter-category').value = '';
+            document.getElementById('filter-search').value = '';
+            renderShoppingTable();
+        });
+
         function showError(message) {
             const errorElement = document.getElementById('error');
             document.getElementById('error-message').textContent = message;
             errorElement.style.display = 'block';
             errorElement.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Find script-specific items button
+        document.getElementById('find-script-items-btn').addEventListener('click', function() {
+            const scriptAnalysis = document.getElementById('script-analysis').textContent || '';
+            
+            if (!scriptAnalysis) {
+                showError('No script analysis available. Please analyze a script first.');
+                return;
+            }
+            
+            // Show a loading indicator
+            const loadingSpinner = document.getElementById('script-items-loading');
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'inline-block';
+            }
+            
+            fetch('/get_script_specific_items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    script_analysis: scriptAnalysis
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (loadingSpinner) {
+                    loadingSpinner.style.display = 'none';
+                }
+                
+                if (data.error) {
+                    showError(data.error);
+                    return;
+                }
+                
+                // Add the script-specific items to the shopping table data
+                if (data.length > 0) {
+                    // Replace existing script_specific items
+                    shoppingTableData = shoppingTableData.filter(item => !item.script_specific);
+                    shoppingTableData = shoppingTableData.concat(data);
+                    
+                    // Update category filter options
+                    updateCategoryFilterOptions();
+                    
+                    // Render the table with the new data
+                    renderShoppingTable('Props', '');  // Default to showing Props first
+                    
+                    // Show success message
+                    showSuccess(`Found ${data.length} items from your script!`);
+                } else {
+                    showError('No specific items could be extracted from your script analysis.');
+                }
+            })
+            .catch(error => {
+                if (loadingSpinner) {
+                    loadingSpinner.style.display = 'none';
+                }
+                showError('Error finding script items: ' + error);
+                console.error('Error finding script items:', error);
+            });
+        });
+
+        // Add loading spinner to script-items-btn
+        const scriptItemsBtn = document.getElementById('find-script-items-btn');
+        if (scriptItemsBtn) {
+            const spinner = document.createElement('span');
+            spinner.id = 'script-items-loading';
+            spinner.className = 'spinner-border spinner-border-sm';
+            spinner.role = 'status';
+            spinner.style.display = 'none';
+            spinner.style.marginLeft = '5px';
+            scriptItemsBtn.appendChild(spinner);
+        }
+        
+        // Function to update category filter options
+        function updateCategoryFilterOptions() {
+            const filterSelect = document.getElementById('filter-category');
+            if (!filterSelect) return;
+            
+            // Clear existing options, except for the blank option
+            while (filterSelect.options.length > 1) {
+                filterSelect.remove(1);
+            }
+            
+            // Get unique categories from shoppingTableData
+            const categories = [...new Set(shoppingTableData.map(item => item.category))];
+            
+            // Sort categories alphabetically
+            categories.sort();
+            
+            // Add options to the select
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                filterSelect.appendChild(option);
+            });
+        }
+        
+        // Success message function
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'alert alert-success';
+            successDiv.role = 'alert';
+            successDiv.style.position = 'fixed';
+            successDiv.style.top = '20px';
+            successDiv.style.left = '50%';
+            successDiv.style.transform = 'translateX(-50%)';
+            successDiv.style.zIndex = '9999';
+            successDiv.style.padding = '10px 20px';
+            successDiv.style.borderRadius = '5px';
+            successDiv.textContent = message;
+            
+            document.body.appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.style.opacity = '0';
+                successDiv.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    document.body.removeChild(successDiv);
+                }, 500);
+            }, 3000);
         }
     </script>
 </body>

@@ -43,7 +43,8 @@ def extract_text_from_pdf(pdf_path):
 def get_script_analysis(script_content):
     """Get script analysis from Cerebras API"""
     prompt = f"""
-    Analyze the following script and extract ALL production elements that will impact the budget:
+    Analyze the following script and extract ALL production elements that will impact the budget.
+    Be concise but thorough. Identify:
     - Number and names of unique characters
     - All locations (interior and exterior)
     - Time periods/eras
@@ -57,13 +58,14 @@ def get_script_analysis(script_content):
     SCRIPT:
     {script_content}
 
-    Provide a comprehensive list of ALL elements organized by category.
+    Provide a focused list of elements organized by category. Be brief but complete.
     """
     
     start_time = time.time()
     response = cerebras_client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
         model="llama3.1-8b",
+        max_tokens=2048  # Limit response size
     )
     end_time = time.time()
     print(f"Cerebras response time (Script Analysis): {end_time - start_time:.2f} seconds")
@@ -74,7 +76,9 @@ def get_script_analysis(script_content):
 def get_budget(script_analysis, budget_level):
     """Get production budget from Cerebras API"""
     prompt = f"""
-    Create a detailed production budget for a {budget_level}-budget film based on the script analysis.
+    Create a detailed production budget for a {budget_level}-budget film based on this script analysis:
+    
+    {script_analysis}
 
     Include line items for:
     1. Pre-production costs
@@ -84,11 +88,7 @@ def get_budget(script_analysis, budget_level):
 
     This is a {budget_level}-budget production, so adjust your estimates accordingly.
 
-    Production Elements:
-    {script_analysis}
-
-    IMPORTANT: Format the budget as properly structured markdown tables with clear headers and columns. 
-    Use the following format for each section:
+    Format the budget as structured markdown tables with clear headers and columns:
 
     ## [Section Name] (estimated: $X - $Y)
     
@@ -97,14 +97,14 @@ def get_budget(script_analysis, budget_level):
     | [Item 1] | $[Amount range] |
     | [Item 2] | $[Amount range] |
     
-    Ensure all budget items have a corresponding cost estimate in the table.
-    Include a final Total Budget table row at the end.
+    Include a final Total Budget row at the end.
     """
     
     start_time = time.time()
     response = cerebras_client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
         model="llama3.1-8b",
+        max_tokens=2048  # Limit response size
     )
     end_time = time.time()
     print(f"Cerebras response time (Budget Creation): {end_time - start_time:.2f} seconds")
@@ -115,21 +115,21 @@ def get_budget(script_analysis, budget_level):
 def get_cost_saving_suggestions(script_analysis, budget):
     """Get cost-saving suggestions from Cerebras API"""
     prompt = f"""
-    Review the proposed budget and provide 3-5 specific suggestions for cost-effective alternatives or creative solutions that could help the production save money while maintaining quality.
-
-    Budget:
+    Review this proposed budget and provide 3-5 specific suggestions for cost-effective alternatives:
+    
     {budget}
 
-    Production Elements:
+    Based on this script analysis:
     {script_analysis}
 
-    Focus on practical, implementable suggestions specific to this script.
+    Focus on practical, implementable suggestions specific to this production.
     """
     
     start_time = time.time()
     response = cerebras_client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
         model="llama3.1-8b",
+        max_tokens=2048  # Limit response size
     )
     end_time = time.time()
     print(f"Cerebras response time (Cost Saving Suggestions): {end_time - start_time:.2f} seconds")
@@ -141,6 +141,16 @@ def process_script(script_content, budget_level="low"):
     """Process a script and generate a complete budget analysis"""
     print("\nProcessing script...")
     print(f"Budget level: {budget_level}")
+    
+    # Check if the script is too long and truncate if necessary
+    token_estimate = len(script_content.split())
+    max_tokens = 2500  # More aggressive truncation - reduced from 4000
+    
+    if token_estimate > max_tokens:
+        print(f"Script is very long ({token_estimate} words). Truncating to approximately {max_tokens} words to fit token limits.")
+        # Truncate to approximately max_tokens words
+        script_content = " ".join(script_content.split()[:max_tokens])
+        script_content += "\n\n[Note: Script was truncated due to length limitations. Analysis is based on this portion only.]"
     
     # Get script analysis
     print("\nGenerating script analysis...")
@@ -175,10 +185,60 @@ def process_script_file(file_path, budget_level="low"):
         if not script_content:
             raise ValueError("Failed to extract text from PDF file")
     else:
-        # Process text file
+        # Process text file - try different encodings
         print(f"Reading text file: {file_path}")
-        with open(file_path, 'r') as f:
-            script_content = f.read()
+        script_content = None
+        encodings = ['utf-8', 'latin-1', 'iso-8859-1', 'cp1252', 'utf-16', 'utf-32', 
+                   'utf-8-sig', 'windows-1250', 'windows-1251', 'windows-1252', 
+                   'windows-1253', 'windows-1254', 'windows-1255', 'windows-1256', 
+                   'windows-1257', 'windows-1258']
+        
+        for encoding in encodings:
+            try:
+                with open(file_path, 'r', encoding=encoding) as f:
+                    script_content = f.read()
+                # If successful, break the loop
+                print(f"Successfully read file with encoding: {encoding}")
+                break
+            except UnicodeDecodeError:
+                # Try the next encoding
+                continue
+        
+        # If all encodings failed
+        if script_content is None:
+            try:
+                # Try binary mode as a last resort
+                with open(file_path, 'rb') as f:
+                    binary_data = f.read()
+                    
+                    # Try to detect if there's a BOM (Byte Order Mark)
+                    if binary_data.startswith(b'\xef\xbb\xbf'):  # UTF-8 BOM
+                        script_content = binary_data[3:].decode('utf-8', errors='replace')
+                    elif binary_data.startswith(b'\xff\xfe'):  # UTF-16 LE BOM
+                        script_content = binary_data[2:].decode('utf-16-le', errors='replace')
+                    elif binary_data.startswith(b'\xfe\xff'):  # UTF-16 BE BOM
+                        script_content = binary_data[2:].decode('utf-16-be', errors='replace')
+                    else:
+                        # Try to use chardet if available
+                        try:
+                            import chardet
+                            detected = chardet.detect(binary_data)
+                            if detected and detected['encoding'] and detected['confidence'] > 0.5:
+                                print(f"Detected encoding: {detected['encoding']} with confidence {detected['confidence']}")
+                                script_content = binary_data.decode(detected['encoding'], errors='replace')
+                            else:
+                                # Last resort: force decode with replace for invalid chars
+                                print("Falling back to latin-1 encoding")
+                                script_content = binary_data.decode('latin-1', errors='replace')
+                        except ImportError:
+                            # If chardet is not available, use safe fallback
+                            print("Chardet not available, using latin-1 encoding")
+                            script_content = binary_data.decode('latin-1', errors='replace')
+            except Exception as e:
+                print(f"Error in binary fallback: {str(e)}")
+                # Absolutely last resort - just replace any non-ASCII bytes with spaces
+                print("Using last resort encoding method")
+                script_content = ''.join(chr(b) if b < 128 else ' ' for b in binary_data)
     
     # Process script
     return process_script(script_content, budget_level)
@@ -186,7 +246,7 @@ def process_script_file(file_path, budget_level="low"):
 
 def save_to_file(file_path, result):
     """Save results to a file"""
-    with open(file_path, 'w') as f:
+    with open(file_path, 'w', encoding='utf-8') as f:
         f.write("===== SCRIPT ANALYSIS =====\n\n")
         f.write(result["script_analysis"])
         f.write("\n\n===== PRODUCTION BUDGET =====\n\n")
