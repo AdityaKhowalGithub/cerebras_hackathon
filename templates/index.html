@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Script to Budget Converter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary-color: #4cc9f0;
+            --text-color: #333;
+            --light-gray: #f8f9fa;
+            --gray: #e0e0e0;
+            --dark-gray: #555;
+            --success: #2ecc71;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        
+        h1 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 2.2rem;
+        }
+        
+        .header p {
+            margin: 0.6rem 0 0;
+            font-weight: 300;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 1.8rem;
+            margin-bottom: 1.8rem;
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 0.8rem;
+            border: 1px solid var(--gray);
+            border-radius: var(--border-radius);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            transition: var(--transition);
+        }
+        
+        textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+            outline: none;
+        }
+        
+        select, input[type="file"] {
+            padding: 0.8rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray);
+            background-color: white;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+        
+        .budget-level-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .budget-option {
+            flex: 1;
+            text-align: center;
+            padding: 1.2rem;
+            border: 2px solid var(--gray);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .budget-option:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .budget-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .budget-option h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .budget-option p {
+            margin: 0.3rem 0;
+            font-size: 0.9rem;
+        }
+        
+        .upload-section {
+            padding: 1.5rem;
+            border: 2px dashed var(--gray);
+            border-radius: var(--border-radius);
+            background-color: rgba(248, 249, 250, 0.6);
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .upload-section:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .or-divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        
+        .or-divider:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: var(--gray);
+            z-index: 0;
+        }
+        
+        .or-divider span {
+            background-color: white;
+            padding: 0 15px;
+            position: relative;
+            z-index: 1;
+            color: var(--dark-gray);
+            font-size: 0.9rem;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            display: inline-block;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            cursor: pointer;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: auto;
+        }
+        
+        .file-input-button {
+            background-color: #f0f2f5;
+            color: var(--dark-gray);
+            padding: 0.7rem 1.2rem;
+            border-radius: var(--border-radius);
+            display: inline-block;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .file-input-wrapper:hover .file-input-button {
+            background-color: #e0e2e5;
+        }
+        
+        .file-name {
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(67, 97, 238, 0.2);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            color: #e74c3c;
+            background-color: rgba(231, 76, 60, 0.1);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin: 1.5rem 0;
+            display: none;
+        }
+        
+        /* Results section styling */
+        .results {
+            display: none;
+        }
+        
+        .results-controls {
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0 2rem;
+        }
+        
+        .results-controls .btn {
+            margin: 0 0.5rem;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .results-section {
+            height: 100%;
+        }
+        
+        .results-content {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* Table styling for budget */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        
+        table th {
+            background-color: rgba(67, 97, 238, 0.1);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+        }
+        
+        table td {
+            padding: 0.7rem 0.8rem;
+            border: 1px solid #ddd;
+        }
+        
+        table tr:nth-child(even) {
+            background-color: rgba(248, 249, 250, 0.6);
+        }
+        
+        table tr.category-header {
+            background-color: rgba(67, 97, 238, 0.05);
+            font-weight: 500;
+        }
+        
+        table tr.total-row {
+            background-color: rgba(67, 97, 238, 0.1);
+            font-weight: 600;
+        }
+        
+        /* Markdown content styling */
+        .results-content h1, .results-content h2, .results-content h3,
+        .results-content h4, .results-content h5, .results-content h6 {
+            color: var(--primary-color);
+            margin-top: 1.2rem;
+            margin-bottom: 0.7rem;
+            font-weight: 600;
+        }
+        
+        .results-content h3 {
+            font-size: 1.2rem;
+        }
+        
+        .results-content ul, .results-content ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .results-content li {
+            margin-bottom: 0.4rem;
+        }
+        
+        .results-content p {
+            margin-bottom: 0.8rem;
+        }
+        
+        .results-content strong {
+            font-weight: 600;
+        }
+        
+        /* Input form section */
+        #input-form-section {
+            transition: var(--transition);
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 1200px) {
+            .results-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .budget-level-selector {
+                flex-direction: column;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .results-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .results-controls .btn {
+                margin: 0.5rem 0;
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Script to Budget Converter</h1>
+        <p>Upload your script and get a detailed production budget analysis</p>
+    </div>
+
+    <div class="container">
+        <div id="input-form-section">
+            <div class="card">
+                <h2><i class="fas fa-film"></i> Select Budget Level</h2>
+                <div class="budget-level-selector">
+                    <div class="budget-option selected" data-value="low">
+                        <h3>Low Budget</h3>
+                        <p>Independent films, short films, small productions</p>
+                        <p>$50K - $500K range</p>
+                    </div>
+                    <div class="budget-option" data-value="medium">
+                        <h3>Medium Budget</h3>
+                        <p>Indie features, TV episodes, mid-tier productions</p>
+                        <p>$1M - $10M range</p>
+                    </div>
+                    <div class="budget-option" data-value="high">
+                        <h3>High Budget</h3>
+                        <p>Major studio productions, blockbusters</p>
+                        <p>$20M+ range</p>
+                    </div>
+                </div>
+                <input type="hidden" id="budget-level" value="low">
+            </div>
+
+            <div class="card">
+                <div class="upload-section">
+                    <div class="form-group">
+                        <label for="script-file"><i class="fas fa-file-upload"></i> Upload a script file (text or PDF)</label>
+                        <div class="file-input-wrapper">
+                            <span class="file-input-button">Choose File</span>
+                            <input type="file" id="script-file" accept=".txt,.pdf">
+                        </div>
+                        <div class="file-name" id="file-name">No file selected</div>
+                    </div>
+                </div>
+
+                <div class="or-divider">
+                    <span>OR</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="script"><i class="fas fa-pen-fancy"></i> Paste your script here</label>
+                    <textarea id="script" placeholder="INT. COFFEE SHOP - DAY&#10;&#10;JOHN (30s, casual) sits at a table, typing on his laptop..."></textarea>
+                </div>
+
+                <button id="process-btn" class="btn"><i class="fas fa-calculator"></i> Generate Budget</button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>Processing script... This may take a few minutes.</p>
+        </div>
+
+        <div class="error" id="error">
+            <p id="error-message"></p>
+        </div>
+
+        <div class="results" id="results">
+            <div class="results-controls">
+                <button id="new-scan-btn" class="btn btn-secondary"><i class="fas fa-sync-alt"></i> Scan Another Script</button>
+            </div>
+            
+            <div class="results-grid">
+                <div class="card results-section">
+                    <h2><i class="fas fa-search"></i> Script Analysis</h2>
+                    <div id="script-analysis" class="results-content"></div>
+                </div>
+
+                <div class="card results-section">
+                    <h2><i class="fas fa-dollar-sign"></i> Production Budget</h2>
+                    <div id="budget" class="results-content"></div>
+                </div>
+
+                <div class="card results-section">
+                    <h2><i class="fas fa-piggy-bank"></i> Cost-Saving Suggestions</h2>
+                    <div id="suggestions" class="results-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Budget level selector
+        document.querySelectorAll('.budget-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected class from all options
+                document.querySelectorAll('.budget-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                // Update hidden input value
+                document.getElementById('budget-level').value = this.dataset.value;
+            });
+        });
+
+        // File input change handler
+        document.getElementById('script-file').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                document.getElementById('file-name').textContent = this.files[0].name;
+            } else {
+                document.getElementById('file-name').textContent = 'No file selected';
+            }
+        });
+        
+        // New scan button handler
+        document.getElementById('new-scan-btn').addEventListener('click', function() {
+            // Show the input form again
+            document.getElementById('input-form-section').style.display = 'block';
+            
+            // Hide results
+            document.getElementById('results').style.display = 'none';
+            
+            // Clear inputs
+            document.getElementById('script').value = '';
+            document.getElementById('script-file').value = '';
+            document.getElementById('file-name').textContent = 'No file selected';
+        });
+
+        // Form submission
+        document.getElementById('process-btn').addEventListener('click', async function() {
+            const scriptContent = document.getElementById('script').value;
+            const scriptFile = document.getElementById('script-file').files[0];
+            const budgetLevel = document.getElementById('budget-level').value;
+
+            // Check if either file or text input is provided
+            if (!scriptFile && !scriptContent.trim()) {
+                showError('Please upload a script file or enter script text');
+                return;
+            }
+
+            // Show loading, hide results and errors
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+
+            try {
+                let response;
+                
+                if (scriptFile) {
+                    // Handle file upload
+                    const formData = new FormData();
+                    formData.append('script_file', scriptFile);
+                    formData.append('budget_level', budgetLevel);
+                    
+                    response = await fetch('/process_script', {
+                        method: 'POST',
+                        body: formData
+                    });
+                } else {
+                    // Handle text input
+                    response = await fetch('/process_script', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            script: scriptContent,
+                            budget_level: budgetLevel
+                        })
+                    });
+                }
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Display results with HTML formatting
+                    document.getElementById('script-analysis').innerHTML = data.script_analysis_html;
+                    
+                    // Apply table styles to budget HTML
+                    document.getElementById('budget').innerHTML = enhanceBudgetHTML(data.budget_html);
+                    document.getElementById('suggestions').innerHTML = data.cost_saving_suggestions_html;
+                    
+                    // Hide the input form section
+                    document.getElementById('input-form-section').style.display = 'none';
+                    
+                    // Show the results
+                    document.getElementById('results').style.display = 'block';
+                    
+                    // Scroll to results
+                    document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    showError(data.error || 'Failed to process script');
+                }
+            } catch (error) {
+                showError('An error occurred while processing the script');
+                console.error(error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+        
+        // Function to enhance table rendering with proper borders
+        function enhanceBudgetHTML(html) {
+            // Ensure tables have the proper classes and styling
+            html = html.replace(/<table>/g, '<table class="budget-table">');
+            
+            // Find category rows (those with stronger formatting) and add appropriate classes
+            html = html.replace(/<tr>\s*<td>\s*<strong>(.*?)<\/strong>\s*<\/td>/g, '<tr class="category-header"><td><strong>$1</strong></td>');
+            
+            // Add Total row styling
+            html = html.replace(/<tr>\s*<td>\s*<strong>TOTAL<\/strong>\s*<\/td>/g, '<tr class="total-row"><td><strong>TOTAL</strong></td>');
+            
+            return html;
+        }
+
+        function showError(message) {
+            const errorElement = document.getElementById('error');
+            document.getElementById('error-message').textContent = message;
+            errorElement.style.display = 'block';
+            errorElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
+    
